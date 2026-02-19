@@ -140,6 +140,7 @@ func (h *Handler) OTP(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_token",
 		Value:    sessionId.Token.String(),
+		Domain: ".sukaseven.com",
 		Expires:  expiresAt.Time,
 		HttpOnly: true,
 		Secure:   true,
