@@ -25,7 +25,7 @@ type EmailResponse struct {
 }
 
 type Handler struct {
-	Queries *gendb.Queries
+	Queries     *gendb.Queries
 	EmailClient *resend.Client
 }
 
@@ -54,6 +54,13 @@ func (h *Handler) Email(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = h.sendEmail(email, otpString)
+	if err != nil {
+		log.Print("Failed to send email:", err)
+		util.WriteJSON(w, http.StatusInternalServerError, util.ErrorResponse{Error: "Something went wrong"})
+		return
+	}
+
 	expiresAt := pgtype.Timestamptz{
 		Time:  time.Now().Add(5 * time.Minute),
 		Valid: true,
@@ -70,13 +77,6 @@ func (h *Handler) Email(w http.ResponseWriter, r *http.Request) {
 		util.WriteJSON(w, http.StatusInternalServerError, util.ErrorResponse{Error: "Something went wrong"})
 		return
 	}
-	
-	err = h.sendEmail(email, otpString)
-	if err != nil {
-		log.Print("Failed to send email:", err)
-		util.WriteJSON(w, http.StatusInternalServerError, util.ErrorResponse{Error: "Something went wrong"})
-		return
-	}
-	
+
 	util.WriteJSON(w, http.StatusBadRequest, EmailResponse{Message: "OTP sent"})
 }
