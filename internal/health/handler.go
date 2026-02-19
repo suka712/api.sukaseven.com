@@ -11,7 +11,7 @@ type HealthResponse struct {
 	Timestamp string `json:"timestamp"`
 }
 
-func HandleHealth(w http.ResponseWriter, r *http.Request) {
+func Health(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 	json.NewEncoder(w).Encode(HealthResponse{
