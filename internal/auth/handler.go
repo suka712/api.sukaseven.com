@@ -121,7 +121,7 @@ func (h *Handler) OTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Queries.DeleteOTP(ctx, email)
-	
+
 	expiresAt := pgtype.Timestamptz{
 		Time:  time.Now().Add(24 * time.Hour),
 		Valid: true,
@@ -140,7 +140,7 @@ func (h *Handler) OTP(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_token",
 		Value:    sessionId.Token.String(),
-		Domain: ".sukaseven.com",
+		Domain:   ".sukaseven.com",
 		Expires:  expiresAt.Time,
 		HttpOnly: true,
 		Secure:   true,
