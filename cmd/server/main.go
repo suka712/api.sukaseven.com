@@ -34,6 +34,7 @@ func main() {
 
 	r.Route("/auth", func(r chi.Router) {
 		r.Post("/email", authHandler.Email)
+		r.Post("/otp", authHandler.OTP)
 	})
 
 	port := os.Getenv("PORT")
