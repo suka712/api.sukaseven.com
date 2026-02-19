@@ -12,10 +12,12 @@ import (
 	"github.com/suka712/api.sukaseven.com/internal/auth"
 	"github.com/suka712/api.sukaseven.com/internal/db"
 	"github.com/suka712/api.sukaseven.com/internal/health"
+	"github.com/suka712/api.sukaseven.com/util"
 )
 
 func main() {
 	godotenv.Load()
+	util.RequireEnvs()
 	r := chi.NewRouter()
 
 	ctx := context.Background()
@@ -34,6 +36,7 @@ func main() {
 		r.Post("/email", authHandler.Email)
 	})
 
-	log.Print("Server starting on port 8080")
-	http.ListenAndServe(":"+"8080", r)
+	port := os.Getenv("PORT")
+	log.Printf("✨ Server starting on port %s...", port)
+	http.ListenAndServe(":" + port, r)
 }

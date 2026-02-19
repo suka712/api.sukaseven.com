@@ -29,7 +29,7 @@ func (h *Handler) sendEmail(to string, otp string) error {
 			<p>Your OTP is <b>%s</b></p>
 			<p>It will expire in 5 minutes.</p>
 			<br>
-			<p>Thankyou! Feel free to reply to this email to chat.</p>`, otp),
+			<p>Thank you! Feel free to reply to this email to chat.</p>`, otp),
 		Subject: "OTP for Sukaseven",
 	}
 
