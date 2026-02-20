@@ -167,6 +167,7 @@ func (h *Handler) OTP(w http.ResponseWriter, r *http.Request) {
 		Expires:  expiresAt.Time,
 		HttpOnly: true,
 		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
 		Path:     "/",
 	})
 
