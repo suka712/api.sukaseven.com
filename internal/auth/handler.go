@@ -87,6 +87,29 @@ func (h *Handler) Email(w http.ResponseWriter, r *http.Request) {
 	util.WriteJSON(w, http.StatusOK, EmailResponse{Message: "OTP sent"})
 }
 
+func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		util.WriteJSON(w, http.StatusUnauthorized, util.ErrorResponse{Error: "No session"})
+		return
+	}
+
+	var token pgtype.UUID
+	err = token.Scan(cookie.Value)
+	if err != nil {
+		util.WriteJSON(w, http.StatusUnauthorized, util.ErrorResponse{Error: "Invalid session"})
+		return
+	}
+
+	session, err := h.Queries.GetSession(r.Context(), token)
+	if err != nil {
+		util.WriteJSON(w, http.StatusUnauthorized, util.ErrorResponse{Error: "Invalid session"})
+		return
+	}
+
+	util.WriteJSON(w, http.StatusOK, map[string]string{"email": session.Email})
+}
+
 func (h *Handler) OTP(w http.ResponseWriter, r *http.Request) {
 	var req OTPRequest
 
