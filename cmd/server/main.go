@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
 	"github.com/resend/resend-go/v3"
 	"github.com/suka712/api.sukaseven.com/internal/auth"
@@ -18,7 +19,6 @@ import (
 func main() {
 	godotenv.Load()
 	util.RequireEnvs()
-	r := chi.NewRouter()
 
 	ctx := context.Background()
 	queries, pool, err := db.Connect(ctx, os.Getenv("DATABASE_URL"))
@@ -30,6 +30,10 @@ func main() {
 	emailClient := resend.NewClient(os.Getenv("RESEND_API_KEY"))
 	authHandler := &auth.Handler{Queries: queries, EmailClient: emailClient}
 
+	r := chi.NewRouter()
+
+	r.Use(cors.Handler(util.CorsOptions()))
+
 	r.Get("/health", health.Health)
 
 	r.Route("/auth", func(r chi.Router) {
@@ -39,5 +43,5 @@ func main() {
 
 	port := os.Getenv("PORT")
 	log.Printf("✨ Server starting on port %s...", port)
-	http.ListenAndServe(":" + port, r)
+	http.ListenAndServe(":"+port, r)
 }
