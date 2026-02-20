@@ -2,13 +2,14 @@ package util
 
 import (
 	"os"
+	"strings"
 
 	"github.com/go-chi/cors"
 )
 
 func CorsOptions() cors.Options {
 	return cors.Options{
-		AllowedOrigins:   []string{os.Getenv("ALLOWED_ORIGIN")},
+		AllowedOrigins:   strings.Split(os.Getenv("ALLOWED_ORIGINS"), ","),
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},

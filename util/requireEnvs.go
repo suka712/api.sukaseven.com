@@ -10,7 +10,7 @@ func RequireEnvs () {
 		"PORT",
 		"DATABASE_URL",
 		"RESEND_API_KEY",
-		"ALLOWED_ORIGIN",
+		"ALLOWED_ORIGINS",
 	}
 
 	for _, env := range(envs) {
