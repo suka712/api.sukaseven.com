@@ -23,6 +23,7 @@ type SpotifyAlbum struct {
 
 type SpotifyTrack struct {
 	Name         string          `json:"name"`
+	DurationMs   int64           `json:"duration_ms"`
 	Artists      []SpotifyArtist `json:"artists"`
 	Album        SpotifyAlbum    `json:"album"`
 	ExternalURLs struct {
@@ -47,6 +48,7 @@ type PlayResponse struct {
 	IsPlaying  bool   `json:"is_playing"`
 	Timestamp  int64  `json:"timestamp"`
 	ProgressMs int64  `json:"progress_ms"`
+	DurationMs int64  `json:"duration_ms"`
 	Track      string `json:"track"`
 	Artist     string `json:"artist"`
 	Album      string `json:"album"`
@@ -64,6 +66,7 @@ func trackToResponse(track SpotifyTrack, isPlaying bool, timestamp int64, progre
 		IsPlaying:  isPlaying,
 		Timestamp:  timestamp,
 		ProgressMs: progressMs,
+		DurationMs: track.DurationMs,
 		Track:      track.Name,
 		Artist:     track.Artists[0].Name,
 		Album:      track.Album.Name,
