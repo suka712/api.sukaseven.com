@@ -2,6 +2,7 @@ package play
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -43,8 +44,14 @@ func getAccessToken() (string, error) {
 	var result struct {
 		AccessToken string `json:"access_token"`
 		ExpiresIn   int    `json:"expires_in"`
+		Error       string `json:"error"`
+		ErrorDesc   string `json:"error_description"`
 	}
 	json.NewDecoder(resp.Body).Decode(&result)
+
+	if resp.StatusCode != 200 || result.AccessToken == "" {
+		return "", fmt.Errorf("spotify token refresh failed (status %d): %s - %s", resp.StatusCode, result.Error, result.ErrorDesc)
+	}
 
 	cachedToken = result.AccessToken
 	tokenExpiry = time.Now().Add(time.Duration(result.ExpiresIn) * time.Second)

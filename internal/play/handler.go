@@ -93,6 +93,10 @@ func Play(w http.ResponseWriter, r *http.Request) {
 			util.WriteJSON(w, http.StatusOK, trackToResponse(current.Item, current.IsPlaying, current.Timestamp, current.ProgressMs))
 			return
 		}
+	} else if resp.StatusCode == 429 {
+		log.Printf("Spotify currently-playing rate limited, Retry-After: %s", resp.Header.Get("Retry-After"))
+	} else if resp.StatusCode != 204 {
+		log.Printf("Spotify currently-playing returned status %d", resp.StatusCode)
 	}
 
 	recentResp, err := spotifyGet("https://api.spotify.com/v1/me/player/recently-played?limit=1")
@@ -102,6 +106,16 @@ func Play(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer recentResp.Body.Close()
+
+	if recentResp.StatusCode == 429 {
+		log.Printf("Spotify recently-played rate limited, Retry-After: %s", recentResp.Header.Get("Retry-After"))
+		util.WriteJSON(w, http.StatusOK, PlayResponse{})
+		return
+	} else if recentResp.StatusCode != 200 {
+		log.Printf("Spotify recently-played returned status %d", recentResp.StatusCode)
+		util.WriteJSON(w, http.StatusOK, PlayResponse{})
+		return
+	}
 
 	var recent RecentlyPlayedResponse
 	json.NewDecoder(recentResp.Body).Decode(&recent)

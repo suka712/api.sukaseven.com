@@ -6,8 +6,11 @@ import (
 	"net/http"
 	"os"
 
+	"time"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/httprate"
 	"github.com/joho/godotenv"
 	"github.com/resend/resend-go/v3"
 	"github.com/suka712/api.sukaseven.com/internal/auth"
@@ -34,6 +37,7 @@ func main() {
 	r := chi.NewRouter()
 
 	r.Use(cors.Handler(util.CorsOptions()))
+	r.Use(httprate.LimitByIP(100, time.Minute))
 
 	r.Get("/health", health.Health)
 
