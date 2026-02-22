@@ -13,6 +13,7 @@ import (
 	"github.com/suka712/api.sukaseven.com/internal/auth"
 	"github.com/suka712/api.sukaseven.com/internal/db"
 	"github.com/suka712/api.sukaseven.com/internal/health"
+	"github.com/suka712/api.sukaseven.com/internal/play"
 	"github.com/suka712/api.sukaseven.com/util"
 )
 
@@ -41,6 +42,8 @@ func main() {
 		r.Post("/otp", authHandler.OTP)
 		r.Get("/session", authHandler.Session)
 	})
+
+	r.Get("/play", play.Play)
 
 	port := os.Getenv("PORT")
 	log.Printf("✨ Server starting on port %s...", port)
