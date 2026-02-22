@@ -31,8 +31,10 @@ type SpotifyTrack struct {
 }
 
 type CurrentlyPlayingResponse struct {
-	IsPlaying bool         `json:"is_playing"`
-	Item      SpotifyTrack `json:"item"`
+	IsPlaying  bool         `json:"is_playing"`
+	Timestamp  int64        `json:"timestamp"`
+	ProgressMs int64        `json:"progress_ms"`
+	Item       SpotifyTrack `json:"item"`
 }
 
 type RecentlyPlayedResponse struct {
@@ -42,27 +44,31 @@ type RecentlyPlayedResponse struct {
 }
 
 type PlayResponse struct {
-	IsPlaying bool   `json:"is_playing"`
-	Track     string `json:"track"`
-	Artist    string `json:"artist"`
-	Album     string `json:"album"`
-	AlbumArt  string `json:"album_art"`
-	URL       string `json:"url"`
+	IsPlaying  bool   `json:"is_playing"`
+	Timestamp  int64  `json:"timestamp"`
+	ProgressMs int64  `json:"progress_ms"`
+	Track      string `json:"track"`
+	Artist     string `json:"artist"`
+	Album      string `json:"album"`
+	AlbumArt   string `json:"album_art"`
+	URL        string `json:"url"`
 }
 
-func trackToResponse(track SpotifyTrack, isPlaying bool) PlayResponse {
+func trackToResponse(track SpotifyTrack, isPlaying bool, timestamp int64, progressMs int64) PlayResponse {
 	albumArt := ""
 	if len(track.Album.Images) > 0 {
 		albumArt = track.Album.Images[0].URL
 	}
 
 	return PlayResponse{
-		IsPlaying: isPlaying,
-		Track:     track.Name,
-		Artist:    track.Artists[0].Name,
-		Album:     track.Album.Name,
-		AlbumArt:  albumArt,
-		URL:       track.ExternalURLs.Spotify,
+		IsPlaying:  isPlaying,
+		Timestamp:  timestamp,
+		ProgressMs: progressMs,
+		Track:      track.Name,
+		Artist:     track.Artists[0].Name,
+		Album:      track.Album.Name,
+		AlbumArt:   albumArt,
+		URL:        track.ExternalURLs.Spotify,
 	}
 }
 
@@ -78,7 +84,7 @@ func Play(w http.ResponseWriter, r *http.Request) {
 	if resp.StatusCode == 200 {
 		var current CurrentlyPlayingResponse
 		json.NewDecoder(resp.Body).Decode(&current)
-		util.WriteJSON(w, http.StatusOK, trackToResponse(current.Item, current.IsPlaying))
+		util.WriteJSON(w, http.StatusOK, trackToResponse(current.Item, current.IsPlaying, current.Timestamp, current.ProgressMs))
 		return
 	}
 
@@ -98,5 +104,5 @@ func Play(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	util.WriteJSON(w, http.StatusOK, trackToResponse(recent.Items[0].Track, false))
+	util.WriteJSON(w, http.StatusOK, trackToResponse(recent.Items[0].Track, false, 0, 0))
 }
