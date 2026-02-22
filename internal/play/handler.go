@@ -32,10 +32,11 @@ type SpotifyTrack struct {
 }
 
 type CurrentlyPlayingResponse struct {
-	IsPlaying  bool         `json:"is_playing"`
-	Timestamp  int64        `json:"timestamp"`
-	ProgressMs int64        `json:"progress_ms"`
-	Item       SpotifyTrack `json:"item"`
+	CurrentlyPlayingType string       `json:"currently_playing_type"`
+	IsPlaying            bool         `json:"is_playing"`
+	Timestamp            int64        `json:"timestamp"`
+	ProgressMs           int64        `json:"progress_ms"`
+	Item                 SpotifyTrack `json:"item"`
 }
 
 type RecentlyPlayedResponse struct {
@@ -87,8 +88,11 @@ func Play(w http.ResponseWriter, r *http.Request) {
 	if resp.StatusCode == 200 {
 		var current CurrentlyPlayingResponse
 		json.NewDecoder(resp.Body).Decode(&current)
-		util.WriteJSON(w, http.StatusOK, trackToResponse(current.Item, current.IsPlaying, current.Timestamp, current.ProgressMs))
-		return
+
+		if current.CurrentlyPlayingType == "track" {
+			util.WriteJSON(w, http.StatusOK, trackToResponse(current.Item, current.IsPlaying, current.Timestamp, current.ProgressMs))
+			return
+		}
 	}
 
 	recentResp, err := spotifyGet("https://api.spotify.com/v1/me/player/recently-played?limit=1")
