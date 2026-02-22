@@ -108,6 +108,7 @@ func Play(w http.ResponseWriter, r *http.Request) {
 			URL:        "https://sukaseven.com",
 		}
 		util.WriteJSON(w, http.StatusTooManyRequests, dummy)
+		return // THIS SHIT IS TEMPORARY REMOVVVVVVVVVVVVVVVVVVVEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	} else if resp.StatusCode != 204 {
 		log.Printf("Spotify currently-playing returned status %d", resp.StatusCode)
 	}
