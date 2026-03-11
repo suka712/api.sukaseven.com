@@ -95,7 +95,20 @@ func Play(w http.ResponseWriter, r *http.Request) {
 		}
 	} else if resp.StatusCode == 429 {
 		log.Printf("Spotify currently-playing rate limited, Retry-After: %s", resp.Header.Get("Retry-After"))
-		// THIS SHIT IS TEMPORARY REMOVVVVVVVVVVVVVVVVVVVEEEEEEEEEEEEEEEEEEEEEEEEEEE
+		// THIS IS TEMPORARY
+		tempRes :=  PlayResponse{
+			IsPlaying: false,
+			Timestamp: 0,
+			ProgressMs: 0,
+			DurationMs: 251000,
+			Track: "Closed Ending",
+			Artist: "SHAUN",
+			Album: "Closed Ending",
+			AlbumArt: "https://i.scdn.co/image/ab67616d00001e02ad364eab28862df117b7f40b",
+		}
+		util.WriteJSON(w, http.StatusOK, tempRes)
+		// THIS IS TEMPORARY
+		return
 	} else if resp.StatusCode != 204 {
 		log.Printf("Spotify currently-playing returned status %d", resp.StatusCode)
 	}
